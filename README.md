@@ -3,7 +3,7 @@
 ### Description
 This project demonstrates a real-time data pipeline that ingests weather data from the OpenWeatherMap API, processes it using Spark, and stores it in a PostgreSQL database. The pipeline is orchestrated using Airflow.
 
-### Technologies Used
+### Tech Stack
 * Kafka
 * Spark
 * Airflow
