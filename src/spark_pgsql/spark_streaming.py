@@ -16,11 +16,10 @@ logging.basicConfig(
 
 def create_spark_session() -> SparkSession:
     spark = (
-        SparkSession.builder.appName("PostgreSQL Connection with PySpark")
+        SparkSession.builder.appName("OpenWeather PostgreSQL Connection with PySpark")
         .config(
             "spark.jars.packages",
             "org.postgresql:postgresql:42.5.4,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0",
-
         )
         .getOrCreate()
     )
@@ -34,11 +33,11 @@ def create_initial_dataframe(spark_session):
     Reads the streaming data and creates the initial dataframe accordingly.
     """
     try:
-        # Gets the streaming data from topic random_names
+        # Gets the streaming data from the topic weather_data
         df = (
             spark_session.readStream.format("kafka")
             .option("kafka.bootstrap.servers", "kafka:9092")
-            .option("subscribe", "rappel_conso")
+            .option("subscribe", "weather_data")  # Changed topic name to 'weather_data'
             .option("startingOffsets", "earliest")
             .load()
         )
@@ -67,14 +66,14 @@ def create_final_dataframe(df):
 
 def start_streaming(df_parsed, spark):
     """
-    Starts the streaming to table spark_streaming.rappel_conso in postgres
+    Starts the streaming to table spark_streaming.weather_data in postgres
     """
     # Read existing data from PostgreSQL
     existing_data_df = spark.read.jdbc(
-        POSTGRES_URL, "rappel_conso_table", properties=POSTGRES_PROPERTIES
+        POSTGRES_URL, "weather_data_table", properties=POSTGRES_PROPERTIES  # Changed table name to 'weather_data_table'
     )
 
-    unique_column = "reference_fiche"
+    unique_column = "id"  # Changed the unique column to 'id' (assuming weather data has a unique 'id')
 
     logging.info("Start streaming ...")
     query = df_parsed.writeStream.foreachBatch(
@@ -83,7 +82,7 @@ def start_streaming(df_parsed, spark):
                 existing_data_df, batch_df[unique_column] == existing_data_df[unique_column], "leftanti"
             )
             .write.jdbc(
-                POSTGRES_URL, "rappel_conso_table", "append", properties=POSTGRES_PROPERTIES
+                POSTGRES_URL, "weather_data_table", "append", properties=POSTGRES_PROPERTIES
             )
         )
     ).trigger(once=True) \
@@ -100,4 +99,4 @@ def write_to_postgres():
 
 
 if __name__ == "__main__":
-    write_to_postgres()
+    write_to
