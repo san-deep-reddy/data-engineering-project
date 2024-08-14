@@ -9,7 +9,7 @@ MAX_OFFSET = 10000
 # 1. MAX_LIMIT: the maximum number of records to be returned by the API (not directly applicable to OpenWeather, but kept for consistency)
 # 2. CITY_NAME: the city for which we want to get the weather data
 # 3. API_KEY: the key to authenticate with the OpenWeather API
-CITY_NAME = "London"
+CITY_NAME = "Chicago"
 API_KEY = os.getenv("OPENWEATHER_API_KEY", "your_default_api_key")
 URL_API = "http://api.openweathermap.org/data/2.5/weather?q={}&appid={}"
 URL_API = URL_API.format(CITY_NAME, API_KEY)
