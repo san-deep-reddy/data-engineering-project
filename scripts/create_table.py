@@ -3,10 +3,10 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import psycopg2
-from src.constants import DB_FIELDS
+from src.constants import DB_FIELDS  # Assuming DB_FIELDS is updated for weather data fields
 
 # Database connection parameters
-dbname = "postgres"
+dbname = "weather_db"  # Updated database name to 'weather_db'
 user = "postgres"
 password = os.getenv("POSTGRES_PASSWORD")
 host = "localhost"
@@ -14,7 +14,6 @@ host = "localhost"
 # Connect to the database
 conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host)
 cur = conn.cursor()
-
 
 def try_execute_sql(sql: str):
     try:
@@ -25,13 +24,12 @@ def try_execute_sql(sql: str):
         print(f"Couldn't execute table creation due to exception: {e}")
         conn.rollback()
 
-
 def create_table():
     """
-    Creates the rappel_conso table and its columns.
+    Creates the weather_data_table and its columns.
     """
     create_table_sql = f"""
-    CREATE TABLE rappel_conso_table (
+    CREATE TABLE weather_data_table (  # Updated table name to 'weather_data_table'
         {DB_FIELDS[0]} text PRIMARY KEY,
     """
     for field in DB_FIELDS[1:-1]:
@@ -43,7 +41,6 @@ def create_table():
 
     cur.close()
     conn.close()
-
 
 if __name__ == "__main__":
     create_table()
